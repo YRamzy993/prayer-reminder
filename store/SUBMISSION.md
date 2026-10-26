@@ -29,14 +29,14 @@ September 2025.
 3. Reserve this exact name:
 
    ```
-   مذكر الصلاة - Prayer Reminder
+   مذّكر الصلاة - Prayer Reminder
    ```
 
    Bilingual on purpose — Arabic speakers find it by name, everyone else by keyword.
    It is already set as `DisplayName` in `build/msix.json`.
 
 > ⚠️ If that name is taken, reserve one of these and change `DisplayName` in
-> `build/msix.json` to match exactly: **مذكر الصلاة - Salah Reminder**,
+> `build/msix.json` to match exactly: **مذّكر الصلاة - Salah Reminder**,
 > **مواقيت الصلاة - Prayer Times Reminder**, **Minaret - Prayer Times & Reminders**.
 > Plain "Prayer Reminder" on its own is very likely already reserved.
 

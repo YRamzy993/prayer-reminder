@@ -7,15 +7,17 @@ Paste each block into the matching field in Partner Center → **Store listings 
 ## Product name (must match the reserved name)
 
 ```
-مذكر الصلاة - Prayer Reminder
+مذّكر الصلاة - Prayer Reminder
 ```
 
 Bilingual on purpose: Arabic speakers find it by name, everyone else finds it by keyword.
 Reserve this exact string in Partner Center, and keep `DisplayName` in `build/msix.json`
 identical to it.
 
-> Note on spelling: the shadda goes on the **ك** (مُذكِّر), not the ذ. Unvocalised — which is
-> how it should be written in the Store — it is **مذكر الصلاة**.
+> This is the name reserved in Partner Center, so the manifest's `DisplayName` must match it
+> character for character — including the shadda on the ذ. (Strictly, the shadda belongs on
+> the ك: مُذكِّر. To switch, reserve the corrected name as a second name for the same product,
+> make it the product name, then change `DisplayName` in `build/msix.json` to match.)
 
 ## Short description (max 1000 characters)
 
@@ -122,7 +124,7 @@ In Partner Center → **Store listings** → **Add a language** → Arabic, then
 ## اسم المنتج
 
 ```
-مذكر الصلاة - Prayer Reminder
+مذّكر الصلاة - Prayer Reminder
 ```
 
 ## الوصف المختصر
@@ -134,7 +136,7 @@ In Partner Center → **Store listings** → **Add a language** → Arabic, then
 ## الوصف
 
 ```
-يعمل «مذكر الصلاة» بهدوء في شريط المهام، وينبّهك قبل كل صلاة حتى لا يفوتك وقتها وأنت منشغل بعملك.
+يعمل «مذّكر الصلاة» بهدوء في شريط المهام، وينبّهك قبل كل صلاة حتى لا يفوتك وقتها وأنت منشغل بعملك.
 
 تظهر نافذة صغيرة قبل الصلاة بدقائق، ثم مرة أخرى عند دخول الوقت. يمكنك تأجيل التنبيه أو إغلاقه.
 

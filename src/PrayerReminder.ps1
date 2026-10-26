@@ -33,7 +33,7 @@ if (-not $NoRun) {
     if (-not $created) {
         # Bilingual literal: the string table is not loaded this early.
         [System.Windows.Forms.MessageBox]::Show(
-            "مذكر الصلاة يعمل بالفعل - انظر الأيقونة بجوار الساعة.`n`nPrayer Reminder is already running - see the tray icon near the clock.",
+            "مذّكر الصلاة يعمل بالفعل - انظر الأيقونة بجوار الساعة.`n`nPrayer Reminder is already running - see the tray icon near the clock.",
             'Prayer Reminder') | Out-Null
         exit
     }
@@ -61,8 +61,8 @@ $script:MethodsAr = @{
 # ---- language -------------------------------------------------------------
 # config.language is 'auto' (follow Windows), 'ar' or 'en'.
 $script:Str = @{
-    alreadyRunning = @{ en = 'Prayer Reminder is already running - see the tray icon near the clock.'; ar = 'مذكر الصلاة يعمل بالفعل - انظر الأيقونة بجوار الساعة.' }
-    appName        = @{ en = 'Prayer Reminder'; ar = 'مذكر الصلاة' }
+    alreadyRunning = @{ en = 'Prayer Reminder is already running - see the tray icon near the clock.'; ar = 'مذّكر الصلاة يعمل بالفعل - انظر الأيقونة بجوار الساعة.' }
+    appName        = @{ en = 'Prayer Reminder'; ar = 'مذّكر الصلاة' }
 
     # tray
     menuHeader   = @{ en = 'Prayer times - {0}'; ar = 'مواقيت الصلاة - {0}' }
@@ -75,11 +75,11 @@ $script:Str = @{
     menuOff      = @{ en = '   (off)'; ar = '   (موقوف)' }
     menuError    = @{ en = 'Error: {0}'; ar = 'خطأ: {0}' }
     trayNext     = @{ en = 'Next: {0} {1} (in {2}h {3}m)'; ar = 'التالية: {0} {1} (بعد {2} س {3} د)' }
-    trayPaused   = @{ en = 'Prayer Reminder - paused'; ar = 'مذكر الصلاة - موقوف مؤقتًا' }
-    trayError    = @{ en = 'Prayer Reminder - error, see menu'; ar = 'مذكر الصلاة - خطأ، انظر القائمة' }
+    trayPaused   = @{ en = 'Prayer Reminder - paused'; ar = 'مذّكر الصلاة - موقوف مؤقتًا' }
+    trayError    = @{ en = 'Prayer Reminder - error, see menu'; ar = 'مذّكر الصلاة - خطأ، انظر القائمة' }
     balloonToday = @{ en = 'Today - {0}'; ar = 'اليوم - {0}' }
     balloonFail  = @{ en = 'Times not loaded: {0}'; ar = 'تعذّر تحميل المواقيت: {0}' }
-    runningTitle = @{ en = 'Prayer Reminder is running'; ar = 'مذكر الصلاة يعمل الآن' }
+    runningTitle = @{ en = 'Prayer Reminder is running'; ar = 'مذّكر الصلاة يعمل الآن' }
     runningBody  = @{ en = 'Location: {0}. Right-click the tray icon for times and settings.'; ar = 'الموقع: {0}. اضغط بزر الفأرة الأيمن على الأيقونة لعرض المواقيت والإعدادات.' }
 
     # popup
@@ -91,7 +91,7 @@ $script:Str = @{
     popupDismiss = @{ en = 'Dismiss'; ar = 'إغلاق' }
 
     # settings
-    setTitle     = @{ en = 'Prayer Reminder - Settings'; ar = 'مذكر الصلاة - الإعدادات' }
+    setTitle     = @{ en = 'Prayer Reminder - Settings'; ar = 'مذّكر الصلاة - الإعدادات' }
     grpLocation  = @{ en = 'Location'; ar = 'الموقع' }
     locAuto      = @{ en = 'Detect automatically (Windows location, internet as fallback) - follows the laptop'; ar = 'تحديد تلقائي (موقع ويندوز، ثم الإنترنت) - يتبع الجهاز أينما كان' }
     locManual    = @{ en = 'Set manually'; ar = 'تحديد يدوي' }
@@ -120,14 +120,14 @@ $script:Str = @{
     langAuto     = @{ en = 'Automatic (follow Windows)'; ar = 'تلقائي (حسب لغة ويندوز)' }
     btnSave      = @{ en = 'Save'; ar = 'حفظ' }
     btnCancel    = @{ en = 'Cancel'; ar = 'إلغاء' }
-    restartNote  = @{ en = 'The language will change the next time Prayer Reminder starts.'; ar = 'ستتغير اللغة عند تشغيل مذكر الصلاة في المرة القادمة.' }
+    restartNote  = @{ en = 'The language will change the next time Prayer Reminder starts.'; ar = 'ستتغير اللغة عند تشغيل مذّكر الصلاة في المرة القادمة.' }
 
     # messages
     msgBadCoords = @{ en = 'Enter a valid latitude (-90..90) and longitude (-180..180), e.g. 30.0444 and 31.2357 for Cairo.'; ar = 'أدخل خط عرض صحيحًا (‎-90‎ إلى 90) وخط طول صحيحًا (‎-180‎ إلى 180)، مثل 30.0444 و31.2357 للقاهرة.' }
     msgNoDetect  = @{ en = 'Could not detect location.'; ar = 'تعذّر تحديد الموقع.' }
     msgNoSound   = @{ en = 'Sound not found. Pick one from the list or Browse to a file.'; ar = 'الملف الصوتي غير موجود. اختر صوتًا من القائمة أو استعرض ملفًا.' }
     msgSavedFail = @{ en = "Saved, but prayer times could not be loaded:`n{0}"; ar = "تم الحفظ، لكن تعذّر تحميل المواقيت:`n{0}" }
-    msgStartupNo = @{ en = "Windows has blocked Prayer Reminder from starting automatically.`n`nTurn it on in Settings > Apps > Startup."; ar = "منع ويندوز تشغيل مذكر الصلاة تلقائيًا.`n`nفعّله من: الإعدادات < التطبيقات < بدء التشغيل." }
+    msgStartupNo = @{ en = "Windows has blocked Prayer Reminder from starting automatically.`n`nTurn it on in Settings > Apps > Startup."; ar = "منع ويندوز تشغيل مذّكر الصلاة تلقائيًا.`n`nفعّله من: الإعدادات < التطبيقات < بدء التشغيل." }
 }
 
 function Get-Lang {
