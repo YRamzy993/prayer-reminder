@@ -2,7 +2,10 @@
 ; Build with: build\build.ps1  (or: iscc build\installer.iss)
 
 #define AppName "Prayer Reminder"
-#define AppVersion "1.0.0"
+; build.ps1 passes /DAppVersion=x.y.z; a bare #define here would override it.
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
 #define AppPublisher "YRamzy993"
 #define AppURL "https://github.com/YRamzy993/prayer-reminder"
 #define AppExe "PrayerReminder.exe"

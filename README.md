@@ -22,6 +22,7 @@ is per-user, so Windows does not ask for administrator rights.
 ## What it does
 
 - 🕌 A popup before each prayer (15 minutes by default) and another at the exact time
+- 🌍 Full **Arabic** and English interface — right-to-left, following your Windows language
 - 🔊 Plays a takbeer, a Windows sound, or any audio file you choose
 - 🗣️ Optionally says the reminder aloud, in Arabic when an Arabic voice is installed
 - 📍 Finds your location automatically and follows the laptop when you travel
@@ -49,6 +50,7 @@ Everything is in one window: right-click the tray icon → **Settings…**
 | Adhan at prayer time | Optional full Adhan file, used only for the on-time popup |
 | Speak aloud | Says which prayer it is, in Arabic if available |
 | Start with Windows | On by default |
+| Language | Automatic (follows Windows), العربية, or English |
 
 ### Arabic voice
 
@@ -100,6 +102,7 @@ winget install JRSoftware.InnoSetup
 .\build\build.ps1 -Version 1.0.0        # dist\PrayerReminder.exe + the installer
 .\build\build-msix.ps1 -SelfSign        # dist\*.msix, for the Microsoft Store
 .\build\make-screenshots.ps1            # Store screenshots, rendered from the real UI
+.\build\make-screenshots.ps1 -Lang ar   # the same, in Arabic (RTL)
 ```
 
 `build-msix.ps1` downloads the ~22 MB Windows SDK build tools from nuget.org on first run,

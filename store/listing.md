@@ -35,6 +35,7 @@ WHAT IT DOES
 • Reminds you before Fajr, Dhuhr, Asr, Maghrib and Isha - 15 minutes ahead by default, or any gap you choose
 • Pops up again at the exact prayer time
 • Plays a short takbeer, a Windows sound, or any audio file you choose - including your own Adhan recording
+• Full Arabic interface, right-to-left, following your Windows language or set by hand
 • Can speak the reminder aloud, in Arabic when an Arabic voice is installed in Windows
 • Finds your location automatically and follows your laptop when you travel, or set your coordinates by hand
 • Shows today's times, and the time remaining until the next prayer, right from the tray icon
@@ -76,6 +77,7 @@ First release.
 Popup reminder before every prayer
 A second popup at the exact prayer time
 Takbeer, Windows sound, or your own Adhan file
+Full Arabic interface, right-to-left
 Spoken reminder, in Arabic when available
 Automatic location that follows your laptop
 23 calculation methods and Hanafi or Standard Asr
@@ -141,6 +143,7 @@ In Partner Center → **Store listings** → **Add a language** → Arabic, then
 • تنبيه قبل الفجر والظهر والعصر والمغرب والعشاء — قبل ١٥ دقيقة افتراضيًا، أو أي مدة تختارها
 • تنبيه آخر عند دخول وقت الصلاة تمامًا
 • تشغيل تكبير قصير، أو صوت من أصوات ويندوز، أو أي ملف صوتي تختاره — بما في ذلك أذان بصوت من تفضّل
+• واجهة عربية كاملة من اليمين إلى اليسار، تتبع لغة ويندوز تلقائيًا ويمكن تغييرها من الإعدادات
 • نطق التذكير بصوت مسموع بالعربية عند تثبيت صوت عربي في ويندوز
 • تحديد موقعك تلقائيًا ومتابعة الحاسوب أثناء السفر، أو إدخال الإحداثيات يدويًا
 • عرض مواقيت اليوم والوقت المتبقي للصلاة القادمة من أيقونة شريط المهام
@@ -220,6 +223,9 @@ https://github.com/YRamzy993/prayer-reminder
 | Screenshot 2 | `assets/store-screenshots/02-prayer-time.png` |
 | Screenshot 3 | `assets/store-screenshots/03-settings.png` |
 | Store logo (300×300) | `assets/msix/StoreListing-300x300.png` |
+
+For the **Arabic** listing use the right-to-left set instead, which shows the app's own
+Arabic interface: `assets/store-screenshots-ar/`.
 
 ## Age rating questionnaire
 
