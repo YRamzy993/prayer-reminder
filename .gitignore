@@ -1,4 +1,4 @@
-dist/
+﻿dist/
 *.log
 *.log.old
 config.json

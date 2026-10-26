@@ -10,6 +10,8 @@ keeps reminding you even with no internet.
 
 **[⬇ Download the installer](../../releases/latest)** — `PrayerReminder-Setup-x.y.z.exe`
 
+_A Microsoft Store listing is in preparation; see [store/SUBMISSION.md](store/SUBMISSION.md)._
+
 Run it and you're done: the app lands in your tray and starts with Windows. The installer
 is per-user, so Windows does not ask for administrator rights.
 
@@ -89,15 +91,26 @@ cd prayer-reminder
 wscript src\PrayerReminder.vbs
 ```
 
-## Build the installer
+## Build it yourself
 
 ```powershell
 Install-Module ps2exe -Scope CurrentUser
 winget install JRSoftware.InnoSetup
-.\build\build.ps1 -Version 1.0.0
+
+.\build\build.ps1 -Version 1.0.0        # dist\PrayerReminder.exe + the installer
+.\build\build-msix.ps1 -SelfSign        # dist\*.msix, for the Microsoft Store
+.\build\make-screenshots.ps1            # Store screenshots, rendered from the real UI
 ```
 
-Output lands in `dist\`: the standalone `PrayerReminder.exe` and the installer.
+`build-msix.ps1` downloads the ~22 MB Windows SDK build tools from nuget.org on first run,
+rather than requiring the full SDK. Store submission details are in
+[store/SUBMISSION.md](store/SUBMISSION.md).
+
+## Privacy
+
+No account, no ads, no analytics. Your settings stay on your PC; your coordinates are sent
+only to the prayer-time and geocoding services that calculate the times. Full detail in
+[PRIVACY.md](PRIVACY.md).
 
 ## Credits and licence
 

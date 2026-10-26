@@ -1,0 +1,10 @@
+{
+  "_comment": "Identity values for the MSIX package. Replace the three placeholders with the exact values from Partner Center: Product identity page (Package/Identity/Name and Package/Identity/Publisher) and your publisher display name. They must match character for character or the Store rejects the upload.",
+
+  "IdentityName": "REPLACE.PrayerReminder",
+  "Publisher": "CN=REPLACE-WITH-PARTNER-CENTER-PUBLISHER-ID",
+  "PublisherDisplayName": "REPLACE-WITH-YOUR-PUBLISHER-DISPLAY-NAME",
+
+  "DisplayName": "Prayer Reminder",
+  "Version": "1.0.0.0"
+}

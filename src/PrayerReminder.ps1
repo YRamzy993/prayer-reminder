@@ -4,7 +4,8 @@
 # Times come from the Aladhan API and are cached per month, so it keeps working offline.
 # Settings live in %APPDATA%\PrayerReminder so the app folder stays read-only.
 # Right-click the tray icon for today's times, Settings, Test popup, Pause and Exit.
-param([switch]$Settings)
+# -NoRun loads the functions without starting the tray app, so build tools can reuse the real UI.
+param([switch]$Settings, [switch]$NoRun)
 
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -26,11 +27,13 @@ $script:Inv        = [Globalization.CultureInfo]::InvariantCulture
 New-Item -ItemType Directory -Force $CacheDir | Out-Null
 
 # ---- single instance ------------------------------------------------------
-$created = $false
-$script:Mutex = New-Object System.Threading.Mutex($true, 'Local\PrayerReminderTray', [ref]$created)
-if (-not $created) {
-    [System.Windows.Forms.MessageBox]::Show('Prayer Reminder is already running - see the tray icon near the clock.', 'Prayer Reminder') | Out-Null
-    exit
+$created = $NoRun
+if (-not $NoRun) {
+    $script:Mutex = New-Object System.Threading.Mutex($true, 'Local\PrayerReminderTray', [ref]$created)
+    if (-not $created) {
+        [System.Windows.Forms.MessageBox]::Show('Prayer Reminder is already running - see the tray icon near the clock.', 'Prayer Reminder') | Out-Null
+        exit
+    }
 }
 
 $script:Prayers = @('Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha')
@@ -42,6 +45,29 @@ $script:Methods = [ordered]@{
     17 = 'JAKIM, Malaysia'; 20 = 'Kemenag, Indonesia'; 12 = 'UOIF, France'; 14 = 'Russia'
     15 = 'Moonsighting Committee'; 18 = 'Tunisia'; 19 = 'Algeria'; 21 = 'Morocco'; 22 = 'Portugal'
     7 = 'Institute of Geophysics, Tehran'; 0 = 'Shia Ithna-Ashari (Jafari)'
+}
+
+# ---- WinRT helpers --------------------------------------------------------
+# WinRT async methods return IAsyncOperation; this turns one into a result we can wait on.
+function Invoke-Async($operation, [type]$resultType) {
+    if (-not $script:AsTaskMethod) {
+        Add-Type -AssemblyName System.Runtime.WindowsRuntime
+        $script:AsTaskMethod = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object {
+            $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' } | Select-Object -First 1
+    }
+    $task = $script:AsTaskMethod.MakeGenericMethod($resultType).Invoke($null, @($operation))
+    [void]$task.Wait(15000)
+    return $task.Result
+}
+
+# True when running from an installed MSIX package (the Microsoft Store build).
+function Test-Packaged {
+    if ($null -ne $script:Packaged) { return $script:Packaged }
+    $script:Packaged = try {
+        $null = [Windows.ApplicationModel.Package,Windows.ApplicationModel,ContentType=WindowsRuntime]
+        $null -ne [Windows.ApplicationModel.Package]::Current.Id.FamilyName
+    } catch { $false }
+    return $script:Packaged
 }
 
 function Write-Log($msg) {
@@ -292,11 +318,8 @@ function Get-SpeechFile([string]$prayer, [string]$kind, [int]$mins) {
 
         $synth = New-Object Windows.Media.SpeechSynthesis.SpeechSynthesizer
         if ($ar) { $synth.Voice = $ar }
-        $asTask = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object {
-            $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 -and $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation`1' } | Select-Object -First 1
-        $task = $asTask.MakeGenericMethod([Windows.Media.SpeechSynthesis.SpeechSynthesisStream]).Invoke($null, @($synth.SynthesizeTextToStreamAsync($text)))
-        [void]$task.Wait(15000)
-        $src = [System.IO.WindowsRuntimeStreamExtensions]::AsStreamForRead($task.Result)
+        $stream = Invoke-Async ($synth.SynthesizeTextToStreamAsync($text)) ([Windows.Media.SpeechSynthesis.SpeechSynthesisStream])
+        $src = [System.IO.WindowsRuntimeStreamExtensions]::AsStreamForRead($stream)
         $fs = [IO.File]::Create($file); $src.CopyTo($fs); $fs.Close()
         return $file
     } catch { Write-Log "Speech failed: $_"; return $null }
@@ -431,8 +454,37 @@ function Invoke-Tick {
     }
 }
 
-# ---- startup shortcut -----------------------------------------------------
+# ---- run at sign-in -------------------------------------------------------
+# Two mechanisms: the MSIX build declares a startupTask in its manifest and toggles it
+# through WinRT (a Startup-folder shortcut would be virtualised away inside the package);
+# the plain build writes an ordinary shortcut.
+$script:StartupTaskId = 'PrayerReminderStartup'
+
+function Set-StartupTask([bool]$enable) {
+    $null = [Windows.ApplicationModel.StartupTask,Windows.ApplicationModel,ContentType=WindowsRuntime]
+    $task = Invoke-Async ([Windows.ApplicationModel.StartupTask]::GetAsync($StartupTaskId)) ([Windows.ApplicationModel.StartupTask])
+    if ($enable) {
+        if ("$($task.State)" -like 'Disabled*') { [void](Invoke-Async ($task.RequestEnableAsync()) ([Windows.ApplicationModel.StartupTaskState])) }
+    } elseif ("$($task.State)" -like 'Enabled*') {
+        $task.Disable()
+    }
+    Write-Log "Startup task state: $($task.State)"
+    return "$($task.State)"
+}
+
 function Set-Startup([bool]$enable) {
+    if (Test-Packaged) {
+        $state = Set-StartupTask $enable
+        # Windows lets the user veto this in Settings > Apps > Startup; respect that.
+        if ($enable -and $state -eq 'DisabledByUser') {
+            [System.Windows.Forms.MessageBox]::Show(
+                "Windows has blocked Prayer Reminder from starting automatically.`n`nTurn it on in Settings > Apps > Startup.",
+                'Prayer Reminder') | Out-Null
+            $Config.startWithWindows = $false
+            Save-Config
+        }
+        return
+    }
     $lnk = Join-Path ([Environment]::GetFolderPath('Startup')) 'Prayer Reminder.lnk'
     if ($enable) {
         $sh = New-Object -ComObject WScript.Shell
@@ -497,7 +549,11 @@ function Show-Settings {
     [void](Add-Ctl (New-Label 'Calculation method') 14 176)
     $S.Method = Add-Ctl (New-Object System.Windows.Forms.ComboBox) 160 172 348
     $S.Method.DropDownStyle = 'DropDownList'
-    foreach ($k in $Methods.Keys) { [void]$S.Method.Items.Add("$k - $($Methods[$k])"); if ($k -eq [int]$Config.method) { $S.Method.SelectedIndex = $S.Method.Items.Count - 1 } }
+    # Enumerate rather than index: an ordered dictionary treats $Methods[3] as position 3, not key 3.
+    foreach ($m in $Methods.GetEnumerator()) {
+        [void]$S.Method.Items.Add("$($m.Key) - $($m.Value)")
+        if ([int]$m.Key -eq [int]$Config.method) { $S.Method.SelectedIndex = $S.Method.Items.Count - 1 }
+    }
     if ($S.Method.SelectedIndex -lt 0) { $S.Method.SelectedIndex = 0 }
     [void](Add-Ctl (New-Label 'Asr calculation') 14 210)
     $S.School = Add-Ctl (New-Object System.Windows.Forms.ComboBox) 160 206 348
@@ -677,6 +733,8 @@ function Update-Menu {
 }
 
 # ---- main -----------------------------------------------------------------
+if ($NoRun) { return }
+
 Write-Log "Starting (app: $AppDir)"
 Import-Config
 try { Set-Startup ([bool]$Config.startWithWindows) } catch { Write-Log "Startup shortcut failed: $_" }

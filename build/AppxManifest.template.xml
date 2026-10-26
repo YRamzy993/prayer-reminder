@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Template for the MSIX package manifest. build-msix.ps1 substitutes the {{...}} tokens
+  from build\msix.json, which holds the identity values Partner Center gives you after
+  you reserve the app name.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap desktop">
+
+  <Identity
+    Name="{{IdentityName}}"
+    Publisher="{{Publisher}}"
+    Version="{{Version}}"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>{{DisplayName}}</DisplayName>
+    <PublisherDisplayName>{{PublisherDisplayName}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+    <Resource Language="ar" />
+  </Resources>
+
+  <Applications>
+    <Application Id="PrayerReminder" Executable="PrayerReminder.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="{{DisplayName}}"
+        Description="Reminds you before each prayer, using prayer times for your PC's location."
+        BackgroundColor="#103A2E"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Wide310x150Logo.png"
+          Square71x71Logo="Assets\Square71x71Logo.png"
+          Square310x310Logo="Assets\Square310x310Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- Replaces the Startup-folder shortcut: a shortcut written from inside the
+             package would be virtualised and never run. The app toggles this at runtime. -->
+        <desktop:Extension Category="windows.startupTask" Executable="PrayerReminder.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="PrayerReminderStartup" Enabled="true" DisplayName="{{DisplayName}}" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- runFullTrust: this is a desktop (Win32) app. Standard for packaged desktop apps. -->
+    <rescap:Capability Name="runFullTrust" />
+    <!-- internetClient: fetches prayer times. location: finds the city for those times. -->
+    <Capability Name="internetClient" />
+    <DeviceCapability Name="location" />
+  </Capabilities>
+</Package>
