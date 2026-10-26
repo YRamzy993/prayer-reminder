@@ -1,13 +1,22 @@
 # Submitting Prayer Reminder to the Microsoft Store
 
-Everything on the build side is done. This is the part only you can do — it needs your
-Microsoft account and a photo ID.
+**Status: submitted 26 October 2026, Submission 1, in certification.**
 
-Budget about **45 minutes** of your time, then 24–48 hours of waiting for certification.
+| | |
+|---|---|
+| Store ID | `9N0PNDJPZ6ZX` |
+| Dashboard | <https://partner.microsoft.com/dashboard/products/9N0PNDJPZ6ZX/overview> |
+| Store link once live | <https://apps.microsoft.com/detail/9N0PNDJPZ6ZX> |
+| Package submitted | `dist\PrayerReminder-1.1.0.0.msix` (358 KB, unsigned) |
+
+Steps 1 to 5 below are a record of what was done, kept because you repeat most of
+them for every update. The part worth reading before your next submission is
+[Things that will trip you up](#things-that-will-trip-you-up) at the end — none of
+it is obvious from Microsoft's own documentation.
 
 ---
 
-## Step 1 — Create the developer account (free)
+## Step 1 — Create the developer account (free) ✅
 
 1. Go to **<https://storedeveloper.microsoft.com>**
 2. Click **Get started for free**
@@ -17,101 +26,166 @@ Budget about **45 minutes** of your time, then 24–48 hours of waiting for cert
 4. Sign in with your Microsoft account (or create one)
 5. **Identity verification**: you photograph a government-issued ID (passport or national ID)
    and take a selfie. Easiest on your phone, in good light.
-6. Wait for verification — usually minutes, sometimes a day.
 
 There is **no registration fee**. Microsoft removed it for individual developers in
 September 2025.
 
-## Step 2 — Reserve the app name
+## Step 2 — Reserve the app name ✅
 
-1. In [Partner Center](https://partner.microsoft.com/dashboard), open **Apps and games**
-2. **New product → MSIX or PWA app**
-3. Reserve this exact name:
+Reserved as:
 
-   ```
-   مذّكر الصلاة - Prayer Reminder
-   ```
+```
+مذّكر الصلاة - Prayer Reminder
+```
 
-   Bilingual on purpose — Arabic speakers find it by name, everyone else by keyword.
-   It is already set as `DisplayName` in `build/msix.json`.
+Bilingual on purpose — Arabic speakers find it by name, everyone else by keyword.
 
-> ⚠️ If that name is taken, reserve one of these and change `DisplayName` in
-> `build/msix.json` to match exactly: **مذّكر الصلاة - Salah Reminder**,
-> **مواقيت الصلاة - Prayer Times Reminder**, **Minaret - Prayer Times & Reminders**.
-> Plain "Prayer Reminder" on its own is very likely already reserved.
+> The shadda sits on the ذ because that is how the name was reserved. Strictly it
+> belongs on the ك: مُذكِّر. `DisplayName` in `build/msix.json` must match the reserved
+> name character for character, so do not "fix" one without reserving the other first.
 
-## Step 3 — Copy your identity values into the build
+## Step 3 — Copy your identity values into the build ✅
 
-1. In Partner Center, open your product → **Product management → Product identity**
-2. Copy these three values:
+Partner Center → your product → **Product management → Product identity**:
 
-   | Partner Center shows | Put it in `build/msix.json` as |
-   |---|---|
-   | Package/Identity/Name | `IdentityName` |
-   | Package/Identity/Publisher | `Publisher` |
-   | Package/Properties/PublisherDisplayName | `PublisherDisplayName` |
+| Partner Center shows | `build/msix.json` key | Value |
+|---|---|---|
+| Package/Identity/Name | `IdentityName` | `YoussefRamzy.620211EF6810F` |
+| Package/Identity/Publisher | `Publisher` | `CN=21176712-4313-4D40-B18F-F89B43F9D474` |
+| Package/Properties/PublisherDisplayName | `PublisherDisplayName` | `Youssef Ramzy` |
 
-3. Edit [`build/msix.json`](../build/msix.json) and replace the three `REPLACE...` placeholders.
-   They must match **character for character**, including the `CN=` prefix.
+These three are public — they are embedded in every published MSIX and shown on the
+listing — so they are committed to the repo to keep the build reproducible.
 
-## Step 4 — Build the package to upload
+## Step 4 — Build the package ✅
 
 ```powershell
 cd C:\Users\user\Projects\prayer-reminder
 .\build\build-msix.ps1
 ```
 
-This produces **`dist\PrayerReminder-1.0.0.0.msix`**.
-
 Do **not** sign it. The Store signs it with a Microsoft certificate during certification —
 that is why MSIX costs nothing, while an .exe/.msi submission would require buying a code
 signing certificate.
 
-## Step 5 — Fill in the submission
+Verify before uploading, by codepoint rather than by eye — PowerShell 5.1 will happily
+mangle the Arabic `DisplayName` into mojibake if anything reads `msix.json` without
+`-Encoding UTF8`:
 
-In Partner Center, your product has these sections. Everything you need to paste is in
-[`listing.md`](listing.md).
+```powershell
+# expect 1605,1584,1617,1603,1585 - the 1617 is the shadda
+[int[]][char[]]'مذّكر'
+```
 
-| Section | What to do |
+## Step 5 — Fill in the submission ✅
+
+What went into each section. The copy itself lives in [`listing.md`](listing.md).
+
+| Section | What was set |
 |---|---|
-| **Pricing and availability** | Price: **Free**. Markets: **All**. Visibility: **Public**. |
-| **Properties** | Category: **Lifestyle**. Privacy policy URL (required — the app uses your location): `https://github.com/YRamzy993/prayer-reminder/blob/main/PRIVACY.md`. Support contact: `https://github.com/YRamzy993/prayer-reminder/issues` |
-| **Age ratings** | Fill in the IARC questionnaire. Answer **No** to every content question — no violence, no user-to-user communication, no purchases, no personal data shared. You'll get a 3+/Everyone rating. |
-| **Packages** | Upload `dist\PrayerReminder-1.0.0.0.msix` |
-| **Store listings (English)** | Paste the text from [`listing.md`](listing.md), upload the three screenshots from `assets/store-screenshots/`, and the 300×300 icon from `assets/msix/StoreListing-300x300.png` |
-| **Store listings (العربية)** | Add Arabic as a second language and paste the Arabic block from [`listing.md`](listing.md). Same screenshots. Worth the five minutes — it is how Arabic speakers will find the app. |
-| **Submission options** | Leave the defaults |
-
-Then click **Submit to the Store**.
+| **Packages** | `PrayerReminder-1.1.0.0.msix`. Validated; Windows 10/11 Desktop auto-selected, rank 1, min version 10.0.17763.0 |
+| **Pricing and availability** | Base price currency **USD – United States**, retail price **0**. Markets: all 240. Visibility: Public. Release: as soon as possible |
+| **Properties** | Category **Lifestyle**. Privacy policy `https://github.com/YRamzy993/prayer-reminder/blob/main/PRIVACY.md`. Website and support URLs set. Phone and postal address left blank — optional, and personal data |
+| **Age ratings** | IARC questionnaire, app type **All Other App Types**, **No** to every content question. Result: IARC 3+, PEGI 3, ESRB Everyone, USK 0, All ages elsewhere |
+| **Store listings** | English and العربية. Description, what's new, product features, screenshots, 300×300 app tile icon, keywords, copyright, licence terms |
+| **Submission options** | Publish as soon as it passes certification. **runFullTrust justification** — see below |
+| **Additional Testing Information** | Notes for certification: how to reach the tray menu, that "Test popup" shows the reminder without waiting, that no sign-in is needed, what the app talks to over the network, and that the PS2EXE executable may trip an automated scanner |
 
 ## Step 6 — Certification
 
-- Usually **24–48 hours**
+- Usually a few hours, up to **3 business days**
 - You get an email either way; failures list the exact policy and how to fix it
-- Once it passes, your Store link is `https://apps.microsoft.com/detail/<your-product-id>`
+- It publishes automatically on success
 
 ### If certification fails
 
 The most likely reason for this app is the **malware/AV scan**. The executable is a
 PowerShell script compiled with PS2EXE, and some scanners treat that pattern as suspicious.
-If the rejection mentions malware, a false positive, or the scan, say so — the fix is to
-rebuild the app as a plain C# program, which removes the pattern entirely. It is a
-mechanical rewrite of the same logic.
-
-## Updating later
-
-1. Bump the version in `build/msix.json` (keep the last part `.0`, e.g. `1.0.1.0`)
-2. `.\build\build-msix.ps1`
-3. Partner Center → your product → **Update** → upload the new `.msix` → Submit
+This is pre-empted in the certification notes, but if the rejection mentions malware, a
+false positive, or the scan, the fix is to rebuild the app as a plain C# program, which
+removes the pattern entirely. It is a mechanical rewrite of the same logic.
 
 ---
 
-## What was already done for you
+## Things that will trip you up
 
-- MSIX manifest with the correct capabilities (`runFullTrust`, `internetClient`, `location`)
-- Run-at-sign-in converted to a declared `startupTask` — a Startup-folder shortcut is
-  virtualised inside a package and would silently never run
-- All 22 Store logo sizes, including the unplated taskbar variants
-- Three 1920×1080 screenshots rendered from the app's real windows
-- A privacy policy, which the Store requires for any app that uses location
-- Listing copy, category and age-rating answers
+Everything here cost real time on the first submission.
+
+### runFullTrust needs a written justification, and it is capped at 500 characters
+
+Uploading the package raises *"Package acceptance validation warning: the following
+restricted capabilities require approval: runFullTrust"*. The justification box is on
+**Submission options**, not on the Packages page, and the submission cannot be completed
+until it is filled.
+
+The cap is **500 characters**, which is not stated until you try to save — a longer answer
+is rejected with `(1771/500)` and the Save silently does nothing. What is there now:
+
+> Prayer Reminder is a Win32 desktop app packaged as MSIX, not UWP, so runFullTrust is
+> required to run. It is used only for: a Windows Forms system-tray icon and context menu
+> showing today's prayer times; borderless popup reminder windows; reading/writing the
+> user's own settings and cached prayer times in %APPDATA%; playing a bundled takbeer clip
+> or an audio file the user picks; and the Windows speech synthesizer. No elevation,
+> drivers or services. Source: github.com/YRamzy993/prayer-reminder
+
+Put the long version in **Additional Testing Information** instead, which has room.
+
+### "You must configure a price" on a free app
+
+Pricing and availability opens with two errors — *"No PriceSchedule created"* and *"You must
+configure a price"* — even though the app is free. You have to pick a **Currency** first
+(the Retail price dropdown stays disabled until you do), then choose **0** from Retail price.
+There is no "Free" option; 0 is the first entry in the price list.
+
+The currency filter matches the **currency code only**. Typing "United States" finds nothing;
+type `USD` and then pick United States from the list.
+
+### Keywords are silently rejected
+
+Partner Center refuses some typed keywords with no error at all — the text vanishes and no
+tag appears. `salah`, `islamic`, `muslim`, `أذان` and `مواقيت الصلاة` were all refused;
+`prayer times`, `athan`, `adhan` and `namaz` were accepted. There is no visible rule.
+
+Two things help: wait for the AI suggestion dropdown to finish loading before pressing Enter
+(pressing it too early loses the word), and take keywords from that dropdown, which are always
+accepted. The current sets are 7 English and 5 Arabic.
+
+Do not pad the list with terms the app does not deliver. `قبلة` (qibla) and `إمساكية` were in
+the original draft and were dropped — there is no qibla compass and no Ramadan timetable, and
+keywords for features you do not ship are a certification-policy risk.
+
+### Screenshots upload one at a time
+
+Passing three files to the screenshot picker in one go uploads only the first, with no error.
+Upload them individually and wait for each thumbnail to appear.
+
+### You do not need to "add a language" for Arabic
+
+The package manifest already declares Arabic and English, so both listings are waiting under
+**Store listings** from the start. The "Manage additional languages" button is for languages
+the package does not declare.
+
+### The IARC terms checkbox is yours to tick
+
+The last thing in Age ratings is a box agreeing to the IARC Terms of Use and attesting that
+you are of the age of majority in your jurisdiction. It is a personal legal statement, so it
+has to be you who ticks it. Nothing else in the section can be saved until it is.
+
+### Store logos are optional
+
+The **Store logos** and **Store display images** blocks on the listing page can all be left
+empty — by default the Store uses the logo images from the package, and the package carries
+all 22 sizes. The 300×300 app tile icon is uploaded anyway because it is the one customers
+on Windows 10/11 actually see.
+
+---
+
+## Updating later
+
+1. Bump the version in `build/msix.json` (keep the last part `.0`, e.g. `1.1.1.0`)
+2. `.\build\build-msix.ps1`
+3. Partner Center → your product → **Update** → upload the new `.msix`
+4. Re-check **Submission options**: the runFullTrust justification has to be present on
+   every submission, not just the first
+5. Update **What's new in this version** in both listings — it still says "First release."
+6. Submit
