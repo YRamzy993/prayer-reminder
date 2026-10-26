@@ -26,11 +26,19 @@ September 2025.
 
 1. In [Partner Center](https://partner.microsoft.com/dashboard), open **Apps and games**
 2. **New product → MSIX or PWA app**
-3. Type the name you want and click **Reserve product name**
+3. Reserve this exact name:
 
-> ⚠️ "Prayer Reminder" is a common name and may already be taken. Good alternatives:
-> **Prayer Reminder — Salah Times**, **Salah Reminder**, **Athan Reminder for Windows**.
-> Whatever you reserve, put that exact text in `build/msix.json` as `DisplayName`.
+   ```
+   مذكر الصلاة - Prayer Reminder
+   ```
+
+   Bilingual on purpose — Arabic speakers find it by name, everyone else by keyword.
+   It is already set as `DisplayName` in `build/msix.json`.
+
+> ⚠️ If that name is taken, reserve one of these and change `DisplayName` in
+> `build/msix.json` to match exactly: **مذكر الصلاة - Salah Reminder**,
+> **مواقيت الصلاة - Prayer Times Reminder**, **Minaret - Prayer Times & Reminders**.
+> Plain "Prayer Reminder" on its own is very likely already reserved.
 
 ## Step 3 — Copy your identity values into the build
 
@@ -71,6 +79,7 @@ In Partner Center, your product has these sections. Everything you need to paste
 | **Age ratings** | Fill in the IARC questionnaire. Answer **No** to every content question — no violence, no user-to-user communication, no purchases, no personal data shared. You'll get a 3+/Everyone rating. |
 | **Packages** | Upload `dist\PrayerReminder-1.0.0.0.msix` |
 | **Store listings (English)** | Paste the text from [`listing.md`](listing.md), upload the three screenshots from `assets/store-screenshots/`, and the 300×300 icon from `assets/msix/StoreListing-300x300.png` |
+| **Store listings (العربية)** | Add Arabic as a second language and paste the Arabic block from [`listing.md`](listing.md). Same screenshots. Worth the five minutes — it is how Arabic speakers will find the app. |
 | **Submission options** | Leave the defaults |
 
 Then click **Submit to the Store**.

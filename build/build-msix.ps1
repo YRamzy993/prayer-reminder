@@ -16,7 +16,9 @@ $repo  = Split-Path -Parent $PSScriptRoot
 $dist  = Join-Path $repo 'dist'
 $stage = Join-Path $dist 'msix-stage'
 
-$cfg = Get-Content (Join-Path $PSScriptRoot 'msix.json') -Raw | ConvertFrom-Json
+# -Encoding UTF8 matters: PowerShell 5.1 otherwise reads this as ANSI and mangles a
+# non-Latin DisplayName into mojibake that ships all the way into the Store listing.
+$cfg = Get-Content (Join-Path $PSScriptRoot 'msix.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($Version) { $cfg.Version = $Version }
 if ($cfg.Version -notmatch '^\d+\.\d+\.\d+\.0$') { throw "Version must be x.y.z.0 (the Store reserves the last part). Got '$($cfg.Version)'" }
 if (-not $SelfSign -and ($cfg.IdentityName -like 'REPLACE*' -or $cfg.Publisher -like '*REPLACE*')) {
