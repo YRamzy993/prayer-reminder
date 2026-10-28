@@ -1,5 +1,7 @@
 # Prayer Reminder
 
+**English** · [العربية](README.ar.md)
+
 A small Windows tray app that reminds you before each prayer, using prayer times for
 wherever your laptop actually is.
 

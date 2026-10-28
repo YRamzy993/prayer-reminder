@@ -175,6 +175,20 @@ The last thing in Age ratings is a box agreeing to the IARC Terms of Use and att
 you are of the age of majority in your jurisdiction. It is a personal legal statement, so it
 has to be you who ticks it. Nothing else in the section can be saved until it is.
 
+### The packaged build reads the real `%APPDATA%`, so settings survive
+
+Verified on 28 October 2026 by uninstalling the Inno build and installing from the Store:
+`%APPDATA%\PrayerReminder\config.json` was picked up unchanged, method and all. Desktop-bridge
+AppData redirection does not apply here, so users moving from the installer to the Store keep
+their settings.
+
+What does **not** survive is anything the user dropped into the app's own `sounds\` folder.
+That folder lives inside the install directory, which the uninstaller deletes and which is
+read-only once the app comes from the Store. `Resolve-SoundPath` only looks in `sounds\` and
+`%WINDIR%\Media`, so a `reminderSound` pointing at a custom file silently falls back to a
+Windows beep. Custom audio has to go in the **Adhan** field instead, which takes an absolute
+path anywhere on disk — at the cost of playing on time rather than at the early reminder.
+
 ### Store logos are optional
 
 The **Store logos** and **Store display images** blocks on the listing page can all be left
