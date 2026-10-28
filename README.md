@@ -8,16 +8,32 @@ keeps reminding you even with no internet.
 
 ## Download
 
+[<img src="https://get.microsoft.com/images/en-us%20dark.svg" height="48" alt="Get it from the Microsoft Store">](https://apps.microsoft.com/detail/9N0PNDJPZ6ZX)
+
+Or from a terminal:
+
+```powershell
+winget install --id 9N0PNDJPZ6ZX --source msstore
+```
+
+The Store build is signed by Microsoft, so there is no warning screen, and it updates itself.
+That is the recommended way in.
+
+<details>
+<summary>Prefer a plain installer, or no Store account?</summary>
+
 **[⬇ Download the installer](../../releases/latest)** — `PrayerReminder-Setup-x.y.z.exe`
 
-_A Microsoft Store listing is in preparation; see [store/SUBMISSION.md](store/SUBMISSION.md)._
+Per-user install, so Windows does not ask for administrator rights.
 
-Run it and you're done: the app lands in your tray and starts with Windows. The installer
-is per-user, so Windows does not ask for administrator rights.
-
-> Windows may show a blue "Windows protected your PC" screen, because the installer is not
+> Windows shows a blue "Windows protected your PC" screen, because this installer is not
 > code-signed (a certificate costs a few hundred dollars a year). Click **More info →
-> Run anyway**, or build it yourself from source with the steps below.
+> Run anyway**, or build it from source with the steps below. The Store build does not have
+> this problem — Microsoft signs it.
+
+</details>
+
+Either way you're done once it runs: the app lands in your tray and starts with Windows.
 
 ## What it does
 
@@ -100,7 +116,8 @@ Install-Module ps2exe -Scope CurrentUser
 winget install JRSoftware.InnoSetup
 
 .\build\build.ps1 -Version 1.0.0        # dist\PrayerReminder.exe + the installer
-.\build\build-msix.ps1 -SelfSign        # dist\*.msix, for the Microsoft Store
+.\build\build-msix.ps1                  # dist\*.msix, unsigned, for the Store to sign
+.\build\build-msix.ps1 -SelfSign        # the same, self-signed, to install and test locally
 .\build\make-screenshots.ps1            # Store screenshots, rendered from the real UI
 .\build\make-screenshots.ps1 -Lang ar   # the same, in Arabic (RTL)
 ```

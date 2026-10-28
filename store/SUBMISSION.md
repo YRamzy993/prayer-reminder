@@ -1,13 +1,17 @@
 # Submitting Prayer Reminder to the Microsoft Store
 
-**Status: submitted 26 October 2026, Submission 1, in certification.**
+**Status: live. Submitted 26 October 2026, passed certification and published 28 October 2026.**
 
 | | |
 |---|---|
+| Store listing | <https://apps.microsoft.com/detail/9N0PNDJPZ6ZX> |
 | Store ID | `9N0PNDJPZ6ZX` |
 | Dashboard | <https://partner.microsoft.com/dashboard/products/9N0PNDJPZ6ZX/overview> |
-| Store link once live | <https://apps.microsoft.com/detail/9N0PNDJPZ6ZX> |
-| Package submitted | `dist\PrayerReminder-1.1.0.0.msix` (358 KB, unsigned) |
+| Package published | `dist\PrayerReminder-1.1.0.0.msix` (358 KB, unsigned — the Store signed it) |
+
+Certification passed first time, including the malware scan that the PS2EXE executable was
+expected to trip. The pre-emptive explanation in **Additional Testing Information** may be
+why; keep it there on future submissions.
 
 Steps 1 to 5 below are a record of what was done, kept because you repeat most of
 them for every update. The part worth reading before your next submission is
