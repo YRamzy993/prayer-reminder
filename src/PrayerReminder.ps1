@@ -262,8 +262,32 @@ function Save-Config {
 }
 
 # ---- location -------------------------------------------------------------
+
+# GeoCoordinateWatcher never raises the Windows location consent prompt. On a PC
+# where location was never granted it just reports an unknown position, so the app
+# silently fell back to the IP lookup and the user was never asked. RequestAccessAsync
+# is the call that actually asks, so it has to come first.
+function Request-LocationAccess {
+    if ($script:LocationAccess) { return $script:LocationAccess }
+    $script:LocationAccess = try {
+        $null = [Windows.Devices.Geolocation.Geolocator, Windows.Devices.Geolocation, ContentType = WindowsRuntime]
+        $null = [Windows.Devices.Geolocation.GeolocationAccessStatus, Windows.Devices.Geolocation, ContentType = WindowsRuntime]
+        $s = "$(Invoke-Async ([Windows.Devices.Geolocation.Geolocator]::RequestAccessAsync()) ([Windows.Devices.Geolocation.GeolocationAccessStatus]))"
+        Write-Log "Location access: $s"
+        $s
+    } catch {
+        # Unpackaged builds and older Windows can throw here. Fall through to the
+        # watcher rather than giving up, which is what this did before.
+        Write-Log "Location access request failed: $_"
+        'Unspecified'
+    }
+    return $script:LocationAccess
+}
+
 function Get-WindowsLocation {
     try {
+        # Only a flat refusal is worth skipping the watcher for; anything else, still try.
+        if ((Request-LocationAccess) -eq 'Denied') { return $null }
         Add-Type -AssemblyName System.Device
         $w = New-Object System.Device.Location.GeoCoordinateWatcher
         if (-not $w.TryStart($true, [TimeSpan]::FromSeconds(5))) { return $null }
