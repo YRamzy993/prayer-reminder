@@ -23,8 +23,12 @@ $script:ConfigPath = Join-Path $DataDir 'config.json'
 $script:CacheDir   = Join-Path $DataDir 'cache'
 $script:LogPath    = Join-Path $DataDir 'prayer-reminder.log'
 $script:SoundsDir  = Join-Path $AppDir 'sounds'
+# A second sounds folder beside config.json, because $SoundsDir sits inside the
+# install directory and that is read-only once the app comes from the Store.
+$script:UserSoundsDir = Join-Path $DataDir 'sounds'
 $script:Inv        = [Globalization.CultureInfo]::InvariantCulture
 New-Item -ItemType Directory -Force $CacheDir | Out-Null
+New-Item -ItemType Directory -Force $UserSoundsDir | Out-Null
 
 # ---- single instance ------------------------------------------------------
 $created = $NoRun
@@ -402,7 +406,8 @@ $script:BuiltInSounds = @('Alarm01', 'Alarm02', 'Alarm03', 'Alarm04', 'Alarm05',
 function Resolve-SoundPath([string]$s) {
     if (-not $s) { return $null }
     if (Test-Path $s) { return $s }
-    foreach ($p in @((Join-Path $SoundsDir $s), (Join-Path $MediaDir "$s.wav"))) { if (Test-Path $p) { return $p } }
+    # User folder first, so dropping a file in there overrides a bundled one of the same name.
+    foreach ($p in @((Join-Path $UserSoundsDir $s), (Join-Path $SoundsDir $s), (Join-Path $MediaDir "$s.wav"))) { if (Test-Path $p) { return $p } }
     return $null
 }
 
@@ -722,7 +727,14 @@ function Show-Settings {
     [void](Add-Ctl (New-Label (T 'lblTone')) 14 544)
     $S.Tone = Add-Ctl (New-Object System.Windows.Forms.ComboBox) 150 541 186
     $S.Tone.DropDownStyle = 'DropDown'
-    if (Test-Path $SoundsDir) { foreach ($f in Get-ChildItem $SoundsDir -Include *.mp3,*.wav -File) { [void]$S.Tone.Items.Add($f.Name) } }
+    # -Include needs a wildcard in the path to match anything, so filter on the extension
+    # instead: with a bare directory it silently returns nothing and the list comes up empty.
+    foreach ($dir in @($UserSoundsDir, $SoundsDir)) {
+        if (-not (Test-Path $dir)) { continue }
+        foreach ($f in Get-ChildItem $dir -File | Where-Object { $_.Extension -in '.mp3', '.wav' }) {
+            if (-not $S.Tone.Items.Contains($f.Name)) { [void]$S.Tone.Items.Add($f.Name) }
+        }
+    }
     foreach ($n in $BuiltInSounds) { if (Test-Path (Join-Path $MediaDir "$n.wav")) { [void]$S.Tone.Items.Add($n) } }
     $S.Tone.Text = $Config.reminderSound
     $play = Add-Ctl (New-Object System.Windows.Forms.Button) 342 540 78 26; $play.Text = T 'btnPlay'
