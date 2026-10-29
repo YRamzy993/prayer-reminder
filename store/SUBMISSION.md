@@ -8,6 +8,7 @@
 | Store ID | `9N0PNDJPZ6ZX` |
 | Dashboard | <https://partner.microsoft.com/dashboard/products/9N0PNDJPZ6ZX/overview> |
 | Package published | `dist\PrayerReminder-1.1.0.0.msix` (358 KB, unsigned — the Store signed it) |
+| In progress | Submission 2, `1.1.2.0`, staged and waiting to be submitted |
 
 Certification passed first time, including the malware scan that the PS2EXE executable was
 expected to trip. The pre-emptive explanation in **Additional Testing Information** may be
@@ -157,6 +158,16 @@ accepted. The current sets are 7 English and 5 Arabic.
 Do not pad the list with terms the app does not deliver. `قبلة` (qibla) and `إمساكية` were in
 the original draft and were dropped — there is no qibla compass and no Ramadan timetable, and
 keywords for features you do not ship are a certification-policy risk.
+
+### Save on the Packages page does not always take the first time
+
+Uploading a higher version makes Partner Center mark the old package with *"This package
+will be removed after you save this page."* Clicking Save once went back to the overview and
+reported **Updated**, but the old package was still there with the same notice pending when
+the page was reopened. A second Save committed it.
+
+Reload the Packages page after saving and confirm only the new version is listed, rather than
+trusting the **Updated** badge.
 
 ### Screenshots upload one at a time
 
